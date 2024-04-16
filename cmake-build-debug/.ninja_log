@@ -1,0 +1,7 @@
+# ninja log v5
+3	131	1713242950707572052	CMakeFiles/final_project.dir/src/snake.c.o	d54e2bfe69c63004
+2	57	1713245476674526210	build.ninja	d3f2913e2cf0069
+131	231	1713242950809341663	final_project	15b6c6182f98dfe7
+2	270	1713247073227717950	CMakeFiles/final_project.dir/src/snake.c.o	d54e2bfe69c63004
+2	270	1713247073228116495	CMakeFiles/final_project.dir/src/snake_implement.c.o	e48a9799f6554cf9
+270	442	1713247073395427108	final_project	fc00897b4d687594
