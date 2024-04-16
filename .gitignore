@@ -1,0 +1,5 @@
+.idea/
+.vagrant/
+cmake-build-debug/
+*.o
+*.exe
