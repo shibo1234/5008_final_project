@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <ncurses.h>
 
-#define DESIRED_WIDTH  70
-#define DESIRED_HEIGHT 25
+#define DESIRED_WIDTH  50
+#define DESIRED_HEIGHT 15
 
 typedef struct {
     int x;
@@ -22,11 +22,13 @@ typedef struct snake {
 } snake;
 
 extern WINDOW *g_main_window;
-extern int g_score, g_width, g_height;
+extern int g_width, g_height;
 extern pos fruit;
-extern bool *spaces;
+extern bool spaces[DESIRED_HEIGHT][DESIRED_WIDTH];
 extern snake *front, *back;
 
+bool collision_detect(pos position);
+void initialize_game();
 void enqueue(pos position);
 pos dequeue();
 void snake_game_over();

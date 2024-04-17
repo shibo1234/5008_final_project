@@ -7,10 +7,18 @@
 
 
 WINDOW *g_main_window;
-int g_score, g_width, g_height;
+int g_width, g_height;
 pos fruit;
-bool *spaces;
 snake *front = NULL, *back = NULL;
+bool spaces[DESIRED_HEIGHT][DESIRED_WIDTH];
+
+void initialize_game() {
+    for (int y = 0; y < DESIRED_HEIGHT; y++) {
+        for (int x = 0; x < DESIRED_WIDTH; x++) {
+            spaces[y][x] = false;
+        }
+    }
+}
 
 void enqueue(pos position) {
     snake *new_node = (snake*)malloc(sizeof(snake));
@@ -52,65 +60,70 @@ pos dequeue() {
 
     free(previous_front);
     return position;
-
 }
 
 void snake_game_over() {
-    free(spaces);
     snake *current = front;
     while (current != NULL) {
         snake *temp = current;
         current = current->tail;
         free(temp);
     }
-    endwin();
-    exit(0);
+//    endwin();
+//    exit(0);
 }
 
 void snake_draw_board() {
     for (int i = 0; i < g_height; i++) {
-        mvwaddch(g_main_window, i, 0, 'X');
-        mvwaddch(g_main_window, i, g_width - 1, 'X');
+        mvwaddch(g_main_window, i, 0, ACS_VLINE);
+        mvwaddch(g_main_window, i, g_width - 1, ACS_VLINE);
     }
     for (int i = 1; i < g_width - 1; i++) {
-        mvwaddch(g_main_window, 0, i, 'X');
-        mvwaddch(g_main_window, g_height - 1, i, 'X');
+        mvwaddch(g_main_window, 0, i, ACS_HLINE);
+        mvwaddch(g_main_window, g_height - 1, i, ACS_HLINE);
     }
-    mvwprintw(g_main_window, g_height + 1, 2, "Score: %d", g_score);
 }
+
 
 void snake_draw_fruit() {
-    int idx;
+    int idx_x, idx_y;
     do {
-        idx = rand() % (g_width * g_height);
-        fruit.y = idx / g_width;
-        fruit.x = idx % g_width;
-    } while (spaces[idx] || fruit.y == 0 || fruit.y == g_height - 1 || fruit.x == 0 || fruit.x == g_width - 1);
+        idx_x = rand() % (g_width - 2) + 1;
+        idx_y = rand() % (g_height - 2) + 1;
+    } while (spaces[idx_y][idx_x]);
 
-    mvwaddch(g_main_window, fruit.y, fruit.x, 'F');
+//    spaces[idx_y][idx_x] = true;
+    fruit.x = idx_x;
+    fruit.y = idx_y;
+    mvwaddch(g_main_window, idx_y, idx_x, 'F');
 }
 
-bool snake_move_player(pos head) {
-    int idx = g_width * head.y + head.x;
-    if (spaces[idx]) {
-        snake_game_over();
-    }
+bool collision_detect(pos position) {
+    return position.x < 0 || position.x >= g_width - 1 || position.y < 0 || position.y >= g_height - 1;
+}
 
-    spaces[idx] = true;
+
+bool snake_move_player(pos head) {
+//    if (collision_detect(head)) {
+////        snake_game_over();
+//        return false;
+//    }
+
+    if (spaces[head.y][head.x]) {
+//        snake_game_over();
+        return false;
+    }
+    spaces[head.y][head.x] = true;
     enqueue(head);
-    g_score += 10;
 
     if (head.x == fruit.x && head.y == fruit.y) {
-        g_score += 1000;
         snake_draw_fruit();
     } else {
         pos tail = dequeue();
-        int tail_idx = g_width * tail.y + tail.x;
-        spaces[tail_idx] = false;
+        spaces[tail.y][tail.x] = false;
         mvwaddch(g_main_window, tail.y, tail.x, ' ');
     }
     mvwaddch(g_main_window, head.y, head.x, 'S');
-    mvwprintw(g_main_window, g_height + 1, 9, "%d", g_score);
     wrefresh(g_main_window);
     return true;
 }
