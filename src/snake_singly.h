@@ -1,9 +1,5 @@
-//
-// Created by shibo zheng on 4/15/24.
-//
-
-#ifndef FINAL_PROJECT_SNAKE_GAME_H
-#define FINAL_PROJECT_SNAKE_GAME_H
+#ifndef FINAL_PROJECT_SNAKE_SINGLY_H
+#define FINAL_PROJECT_SNAKE_SINGLY_H
 #include <stdbool.h>
 #include <ncurses.h>
 
@@ -18,15 +14,14 @@ typedef struct {
 
 typedef struct snake {
     pos position;
-    struct snake *pre;
-    struct snake *tail;
+    struct snake *next;
 } snake;
 
 extern WINDOW *g_main_window;
 extern int g_score, g_width, g_height;
 extern pos fruit;
 extern bool spaces[DESIRED_HEIGHT][DESIRED_WIDTH];
-extern snake *front, *back;
+extern snake *front;
 
 bool collision_detect(pos position);
 void initialize_game();

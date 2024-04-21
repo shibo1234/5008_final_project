@@ -1,12 +1,9 @@
-//
-// Created by shibo zheng on 4/15/24.
-//
 
-#include "snake_game.h"
+#include "snake_singly.h"
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h> 
+#include <unistd.h>
 
 #define SLEEPTIME 200000
 

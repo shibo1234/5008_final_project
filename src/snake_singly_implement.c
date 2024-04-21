@@ -1,15 +1,12 @@
-//
-// Created by shibo zheng on 4/15/24.
-//
-#include "snake_game.h"
+#include "snake_singly.h"
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h> 
+#include <unistd.h>
 
 WINDOW *g_main_window;
 int g_score, g_width, g_height;
 pos fruit;
-snake *front = NULL, *back = NULL;
+snake *front = NULL;
 bool spaces[DESIRED_HEIGHT][DESIRED_WIDTH];
 
 double speed = 1.0;
@@ -32,16 +29,16 @@ void enqueue(pos position) {
         exit(EXIT_FAILURE);
     }
     new_node->position = position;
-    new_node->tail = NULL;
-    new_node->pre = back;
-
-    if (back != NULL) {
-        back->tail = new_node;
-    }
-    back = new_node;
+    new_node->next = NULL;
 
     if (front == NULL) {
         front = new_node;
+    } else{
+        snake *current = front;
+        while(current -> next != NULL){
+            current = current -> next;
+        }
+        current -> next = new_node;
     }
 }
 
@@ -54,13 +51,7 @@ pos dequeue() {
 
     snake *previous_front = front;
     pos position = previous_front->position;
-    front = front->tail;
-
-    if (front != NULL) {
-        front->pre = NULL;
-    } else {
-        back = NULL;
-    }
+    front = front->next;
 
     free(previous_front);
     return position;
@@ -70,11 +61,9 @@ void snake_game_over() {
     snake *current = front;
     while (current != NULL) {
         snake *temp = current;
-        current = current->tail;
+        current = current->next;
         free(temp);
     }
-//    endwin();
-//    exit(0);
 }
 
 void snake_draw_board() {
@@ -97,7 +86,6 @@ void snake_draw_fruit() {
         idx_y = rand() % (g_height - 2) + 1;
     } while (spaces[idx_y][idx_x]);
 
-//    spaces[idx_y][idx_x] = true;
     fruit.x = idx_x;
     fruit.y = idx_y;
     mvwaddch(g_main_window, idx_y, idx_x, 'F');
@@ -148,7 +136,6 @@ bool snake_move_player(pos head) {
     if (head.x == fruit.x && head.y == fruit.y) {
         g_score += 10;
         sleep_time -= 20000;
-        // speed += 0.01;
         snake_draw_fruit();
     } else {
         pos tail = dequeue();
